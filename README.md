@@ -1,9 +1,10 @@
-# ORLA (Orlov Reinforcment Learning Algorithms)
+# ORLA (Orlov test Reinforcment Learning Algorithms)
 
 ## Base commands
 
-### install requirements
-
- ```
- pip install -r requirements.txt
- ```
+### install & start test
+```
+python -m venv .venv
+pip install -e ".[dev]"
+pytest .\tests\test_algorithms.py -v
+```
