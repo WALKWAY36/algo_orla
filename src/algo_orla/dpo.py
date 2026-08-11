@@ -6,12 +6,12 @@ import torch
 class DPO:
     def preference_logit(
         self,
-        policy_chosen: torch.Tensor,  # [B, G, T]
-        policy_rejected: torch.Tensor,  # [B, G, T]
-        ref_chosen: torch.Tensor,  # [B, G, T]
-        ref_rejected: torch.Tensor,  # [B, G, T]
+        policy_chosen: torch.Tensor,  # [B]
+        policy_rejected: torch.Tensor,  # [B]
+        ref_chosen: torch.Tensor,  # [B]
+        ref_rejected: torch.Tensor,  # [B]
         beta: float,
-    ) -> torch.Tensor:  # [B, G, T]
+    ) -> torch.Tensor:  # [B]
         """beta * [(policy_chosen-ref_chosen) - (policy_rejected-ref_rejected)]
 
         Args:

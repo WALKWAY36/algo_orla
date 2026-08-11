@@ -6,9 +6,9 @@ import torch
 class DAPO:
     def effective_group_mask(
         self,
-        rewards: torch.Tensor,  # [B, G]
+        rewards: torch.Tensor,  # [B]
         eps: float = 1e-8,
-    ) -> torch.Tensor:  # [B, G]
+    ) -> torch.Tensor:  # [B]
         """keep only groups with useful reward variance.
 
         Args:
@@ -19,15 +19,15 @@ class DAPO:
             torch.Tensor: _description_
         """
 
-        std = rewards.std(dim=1, keepdim=True, correction=0)  # [B, G]
+        std = rewards.std(dim=1, correction=0)  # [B]
 
-        return torch.where(std > eps, bool(1), bool(0))
+        return std > eps
 
     def token_mean(
         self,
         token_losses: torch.Tensor,  # [B, G, T]
         mask: torch.Tensor,  # [B, G, T]
-    ) -> torch.Tensor:  # [B, G, T]
+    ) -> torch.Tensor:  # []
         """unlike sequence mean, every valid token has equal weight.
 
         Args:
@@ -40,5 +40,6 @@ class DAPO:
         Returns:
             torch.Tensor: _description_
         """
-        mask = mask.to(token_losses.dtype)  # [B, G, T]
-        return sum(token_losses) / sum(mask)
+        mask = mask.to(token_losses.float().dtype)  # [B, G, T]
+        nominator = token_losses * mask  # [B, G, T]
+        return nominator.sum(dim=-1) / mask.sum(dim=-1)

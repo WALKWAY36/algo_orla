@@ -10,5 +10,4 @@ class Reinforce:
         baseline: torch.Tensor | float,  # [B, G]
     ) -> torch.Tensor:  # [B, G]
         adv = returns - baseline  # [B, G]
-        adv.detach()  # Чтобы policy loss не обучал critic
-        return adv
+        return adv.detach()  # Чтобы policy loss не обучал critic

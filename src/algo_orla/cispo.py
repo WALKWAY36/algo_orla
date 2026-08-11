@@ -25,7 +25,7 @@ class CISPO:
         Returns:
             torch.Tensor: _description_
         """
-
+        old_log_probs = old_log_probs.detach()
         ratio = torch.exp(new_log_probs - old_log_probs)  # [B, G, T]
         weight = torch.clamp(ratio, 1 - low, 1 + high)  # [B, G, T]
 

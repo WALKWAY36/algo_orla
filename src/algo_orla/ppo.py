@@ -9,8 +9,8 @@ class PPO:
         new_log_probs: torch.Tensor,  # [B, G, T]
         old_log_probs: torch.Tensor,  # [B, G, T]
     ) -> torch.Tensor:  # [B,G,T]
-        result_ratio = torch.exp(new_log_probs - old_log_probs)  # [B,G,T]
-        old_log_probs.detach()  # Чтобы gradient не шёл в old policy
+        old = old_log_probs.detach()  # Чтобы gradient не шёл в old policy
+        result_ratio = torch.exp(new_log_probs - old)  # [B,G,T]
         return result_ratio
 
     def clipped_objective(
@@ -19,7 +19,8 @@ class PPO:
         advantage: torch.Tensor,  # [B, G]
         epsilon: float,
     ) -> torch.Tensor:
-        unclipped = ratio * advantage
-        clipped = torch.clamp(ratio, 1 - epsilon, 1 + epsilon) * advantage
+        adv = advantage.unsqueeze(-1)
+        unclipped = ratio * adv
+        clipped = torch.clamp(ratio, 1 - epsilon, 1 + epsilon) * adv
         surrogate = torch.min(unclipped, clipped)
         return surrogate
